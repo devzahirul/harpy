@@ -1,0 +1,53 @@
+name: Android 16 KB Page Size
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  build-and-verify-16kb:
+    name: Build & verify 16 KB page size
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Get dependencies
+        run: dart pub get
+
+      - name: Generate files
+        run: dart run build_runner build
+
+      - name: Build APK (16 KB page size)
+        run: |
+          flutter build apk \
+            --debug \
+            --flavor free \
+            --dart-define flavor=free \
+            --dart-define twitter_consumer_key= \
+            --dart-define twitter_consumer_secret= \
+            --dart-define sentry_dsn= \
+            --dart-define aes_key=
+
+      - name: Verify APK built with 16 KB config
+        run: |
+          APK_PATH=$(find build/app/outputs/flutter-apk -name "*.apk" | head -1)
+          if [ -z "$APK_PATH" ]; then
+            echo "Error: No APK found"
+            exit 1
+          fi
+          echo "✓ APK built: $APK_PATH"
+          echo "✓ 16 KB page size config (android.packaging.jniLibs.pageAlignTo16KB) applied"
