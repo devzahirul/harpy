@@ -63,7 +63,7 @@ dependencies:
   permission_handler: ^10.0.0
   photo_view:
     # photo_view fork with better gesture recognition
-    git: https://github.com/robertodoering/photo_view.git
+    git: https://github.com/devzahirul/photo_view.git
   rby:
     git: https://github.com/robertodoering/rby.dart
     # path: ../rby.dart
